@@ -8,27 +8,23 @@ defined('HOSTCMS') || exit('HostCMS: access denied.');
 class Core_Dump
 {
 	/**
-	 * 
+	 * Глубина вывода переменных.
+	 *
+	 * @var integer
 	 */
 	static public $depth = 3;
 
 	/**
-	 * 
-	 */
-	static public $protected = TRUE;
-
-	/**
-	 * 
-	 */
-	static public $private = TRUE;
-
-	/**
-	 * 
+	 * Количество выводимых символов в строках.
+	 *
+	 * @var integer
 	 */
 	static public $stringLength = 128;
 
 	/**
-	 * 
+	 * Количество выводимых элементов в массиве.
+	 *
+	 * @var integer
 	 */
 	static public $arrayWidth = 5;
 
@@ -37,7 +33,7 @@ class Core_Dump
 	 *
 	 * @return void
 	 */
-	static public function d()
+	static public function dump()
 	{
 		if (!Core_Auth::logged())
 		{
@@ -64,6 +60,17 @@ class Core_Dump
 	}
 
 	/**
+	 * Возвращает дамп переменной.
+	 *
+	 * @param  mixed  $variable
+	 * @return string
+	 */
+	static public function export($variable)
+	{
+		return self::_getDumpVar($variable);
+	}
+
+	/**
 	 * Выводит содержимое переменных.
 	 *
 	 * @param  array  $aVariables
@@ -84,8 +91,13 @@ class Core_Dump
 	}
 
 	/**
+	 * 
 	 *
 	 * @see https://www.leaseweb.com/labs/2013/10/smart-alternative-phps-var_dump-function/
+	 *
+	 * @param  mixed  $variable
+	 * @param  integer  $level
+	 * @param  array  $aObjects
 	 */
 	static protected function _getDumpVar($variable, $level = 0, &$aObjects = array())
 	{
@@ -107,7 +119,7 @@ class Core_Dump
 			break;
 
 			case 'NULL':
-				$output .= '';
+				$output .= 'null';
 			break;
 
 			case 'unknown type':
@@ -177,16 +189,16 @@ class Core_Dump
 				}
 				elseif ($level == self::$depth)
 				{
-					$output .= get_class($variable).' {...}';
+					$output .= get_class($variable) . ' {...}';
 				}
 				else
 				{
 					$objectId = array_push($aObjects, $variable);
 
-					$array = (array) $variable;
 					$tabs = str_repeat(' ', $level * 2);
+					$output .= get_class($variable) . "#$objectId {";
 
-					$output .= get_class($variable) . "#$objectId\n" . $tabs . '{';
+					$array = self::_getObjectProperties($variable);
 					$aProperties = array_keys($array);
 
 					foreach ($aProperties as $property)
@@ -206,5 +218,23 @@ class Core_Dump
 		}
 
 		return $output;
+	}
+
+	/**
+	 * Возвращет свойства объекта.
+	 *
+	 * @param  object  $variable
+	 * @return void
+	 */
+	static protected function _getObjectProperties($variable)
+	{
+		if ($variable instanceof Core_Orm)
+		{
+			return $variable->toArray();
+		}
+		else
+		{
+			return (array) $variable;
+		}
 	}
 }
