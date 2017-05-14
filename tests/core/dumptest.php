@@ -46,7 +46,7 @@ class Core_DumpTest extends \PHPUnit\Framework\TestCase
 	{
 		// Настройки дампера
 		Core_Dump::$depth = 3;
-		Core_Dump::$stringLength = 32;
+		Core_Dump::$stringLength = 35;
 		Core_Dump::$arrayWidth = 20;
 
 		$resource = fopen('php://input', 'r');
@@ -76,6 +76,7 @@ class Core_DumpTest extends \PHPUnit\Framework\TestCase
 			$unknown,
 			'Lorem Ipsum is simply dummy',
 			'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+			"Lorem\n\r Ipsum is simply dummy\t text of the printing and typesetting industry.",
 			array(
 				array(
 					0, 1, 2, 3, 4
@@ -91,7 +92,7 @@ class Core_DumpTest extends \PHPUnit\Framework\TestCase
 		);
 
 		$expected = <<<EOT
-array(11) {
+array(12) {
   [0] => true
   [1] => 500
   [2] => 1000
@@ -99,8 +100,9 @@ array(11) {
   [4] => null
   [5] => ???
   [6] => string(27): "Lorem Ipsum is simply dummy"
-  [7] => string(74): "Lorem Ipsum is simply dummy text"...
-  [8] => array(2) {
+  [7] => string(74): "Lorem Ipsum is simply dummy text of"...
+  [8] => string(77): "Lorem\\n\\r Ipsum is simply dummy\\t text"...
+  [9] => array(2) {
     [0] => array(5) {
       [0] => 0
       [1] => 1
@@ -112,7 +114,7 @@ array(11) {
       [0] => array(3) {...}
     }
   }
-  [9] => stdClass#1 {
+  [10] => stdClass#1 {
     [string] => string(6): "string"
     [integer] => 1000
     [boolean] => true
@@ -120,7 +122,7 @@ array(11) {
       [0] => array(1) {...}
     }
   }
-  [10] => Module_Model#2 {
+  [11] => Module_Model#2 {
     [id] => null
     [name] => string(11): "test module"
     [description] => null

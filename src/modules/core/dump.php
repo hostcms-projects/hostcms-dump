@@ -98,6 +98,7 @@ class Core_Dump
 	 * @param  mixed  $variable
 	 * @param  integer  $level
 	 * @param  array  $aObjects
+	 * @return string
 	 */
 	static protected function _getDumpVar($variable, $level = 0, &$aObjects = array())
 	{
@@ -129,28 +130,34 @@ class Core_Dump
 			case 'string':
 				$length = strlen($variable);
 
-				// TODO: замена непечатаемых символов на печатаемые
+				// Обрезаем строку до максимальной длины
+				$string = substr($variable, 0, self::$stringLength);
+				
+				// Замена непечатаемых символов на печатаемые
+				$string = str_replace(
+					array("\0", "\a", "\b", "\f", "\n", "\r", "\t", "\v"),
+					array('\0', '\a', '\b', '\f', '\n', '\r', '\t', '\v'),
+					$string
+				);
 
+				$output .= 'string(' . $length . '): "' . $string . '"';
+
+				// Добавляем признак обрезанной строки
 				if ($length > self::$stringLength)
 				{
-					$string = substr($variable, 0, self::$stringLength);
-					$string = '"' . $string . '"...';
+					$output .= '...';
 				}
-				else
-				{
-					$string = '"' . $variable . '"';
-				}
-
-				$output .= 'string(' . $length . '): ' . $string;
 			break;
 
 			case 'array':
 				$length = count($variable);
 
+				// Массив пустой
 				if (!$length)
 				{
 					$array = '';
 				}
+				// Преодолена максимальная вложенность
 				elseif ($level == self::$depth)
 				{
 					$array  = '...';
@@ -163,6 +170,7 @@ class Core_Dump
 
 					foreach ($variable as $key => $value)
 					{
+						// Образем массив до максимального количества элементов
 						if ($countKeys == self::$arrayWidth)
 						{
 							$array .= "\n" . $tabs . '  ...';
@@ -183,10 +191,12 @@ class Core_Dump
 			case 'object':
 				$objectId = array_search($variable, $aObjects);
 
+				// Если объект выводился ранее, то не раскрываем его 
 				if ($objectId !== FALSE)
 				{
 					$output .= get_class($variable) . '#' . ($objectId + 1).' {...}';
 				}
+				// Преодолена максимальная вложенность
 				elseif ($level == self::$depth)
 				{
 					$output .= get_class($variable) . ' {...}';
@@ -223,18 +233,18 @@ class Core_Dump
 	/**
 	 * Возвращет свойства объекта.
 	 *
-	 * @param  object  $variable
+	 * @param  object  $object
 	 * @return void
 	 */
-	static protected function _getObjectProperties($variable)
+	static protected function _getObjectProperties($object)
 	{
-		if ($variable instanceof Core_Orm)
+		if ($object instanceof Core_Orm)
 		{
-			return $variable->toArray();
+			return $object->toArray();
 		}
 		else
 		{
-			return (array) $variable;
+			return (array) $object;
 		}
 	}
 }
