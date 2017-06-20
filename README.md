@@ -63,8 +63,43 @@ array(12) {
 }
 ```
 
+## Скоращенная версия
+
+При отладке не очень удобно записывать длинные выражения, поэтому удобно в `bootstrap.php` объявить краткие псевдонимы для представленных методов:
+
+```
+function dd()
+{
+  call_user_func_array(array('Core_Dump', 'dd'), func_get_args());
+}
+
+function dump()
+{
+  call_user_func_array(array('Core_Dump', 'dump'), func_get_args());
+}
+
+function export($variable)
+{
+  return Core_Dump::export($variable);
+}
+```
+
+И после можем использовать следующим образом:
+
+```
+dd($source1);
+
+dump($source1);
+
+$varExport = export($source1);
+```
+
 ## Тесты
 
 Для запуска тестов:
 
 ```$ vendor/bin/phpunit --test-suffix="test.php" tests/```
+
+## Лицензия
+
+MIT
