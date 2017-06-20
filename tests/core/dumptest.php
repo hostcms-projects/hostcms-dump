@@ -3,7 +3,7 @@
 /**
  * Тест для класса Core_Dump.
  */
-class Core_DumpTest extends \PHPUnit\Framework\TestCase
+class Core_DumpTest extends PHPUnit_Framework_TestCase
 {
 	/**
 	 * @var Site_Model
