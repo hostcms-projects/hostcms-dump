@@ -29,5 +29,8 @@
     },
     "autoload-dev": {
         "classmap": ["tests/"]
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit --test-suffix=\"test.php\" tests/"
     }
 }

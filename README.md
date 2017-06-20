@@ -98,7 +98,7 @@ $varExport = export($source1);
 
 Для запуска тестов:
 
-```$ vendor/bin/phpunit --test-suffix="test.php" tests/```
+```$ composer test```
 
 ## Лицензия
 
