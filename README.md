@@ -100,6 +100,10 @@ $varExport = export($source1);
 
 ```$ composer test```
 
+## Читать
+
+https://kad.systems/blog/maksim-z/variable-dump/
+
 ## Лицензия
 
 MIT
